@@ -53,14 +53,39 @@ class User(AbstractBaseUser, PermissionsMixin):
     # パスワードフィールドはAbstractBaseUserにすでにあるので、指定する必要がない
     # superuserかどうかは、PermissionMixinにすでにあるので、指定する必要がない
 
-
     USERNAME_FIELD = 'email'  # ユーザーを一意に識別するフィールドは何か指定する
     REQUIRED_FIELDS = ['username']  # スーパーユーザー作成時に必須とするものを指定する
     # password以外で。この場合、emailも必須になっているので、それら以外。
-
 
     # マネージャーを指定する
     objects = UserManager()
 
     def __str__(self):
         return self.email
+
+
+class Students(models.Model):
+
+    name = models.CharField(max_length=20)
+    age = models.IntegerField()
+    score = models.IntegerField()
+    school = models.ForeignKey('Schools', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name}: {self.age}歳'
+
+    class Meta:
+        db_table = 'students'
+        verbose_name = verbose_name_plural = '生徒'
+        ordering = ('-score',)  # デフォルトの並び順を指定
+
+
+class Schools(models.Model):
+    name = models.CharField(max_length=20, verbose_name='学校名')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'schools'
+        verbose_name = verbose_name_plural = '学校'
